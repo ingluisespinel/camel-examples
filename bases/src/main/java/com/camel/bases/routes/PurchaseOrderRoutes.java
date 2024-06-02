@@ -43,7 +43,7 @@ public class PurchaseOrderRoutes extends RouteBuilder {
         from("direct:orderFilter")
                 .routeId("route-order-filter")
                 .log("Filtering orders with total greater than 500")
-                .filter(simple("${body.total} > 500"))
+                .filter(simple("${body.total} > 800"))
                     .log("Filtered OrderId ${body.id} with total ${body.total}")
                     .to("direct:confirmOrder")
                     .stop() // IMPORTANT: Stop the filtered exchange
