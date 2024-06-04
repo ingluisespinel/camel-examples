@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<orders>
+    <order>
+        <id>1</id>
+        <owner>Luis Espinel</owner>
+        <items>
+            <item>
+                <id>1</id>
+                <name>Item 1</name>
+                <amount>1500</amount>
+            </item>
+        </items>
+    </order>
+    <order>
+        <id>2</id>
+        <owner>Luis Espinel</owner>
+        <items>
+            <item>
+                <id>2</id>
+                <name>Item 2</name>
+                <amount>500</amount>
+            </item>
+        </items>
+    </order>
+</orders>
