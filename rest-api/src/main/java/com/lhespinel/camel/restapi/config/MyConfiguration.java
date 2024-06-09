@@ -1,6 +1,7 @@
 package com.lhespinel.camel.restapi.config;
 
 import com.lhespinel.camel.restapi.components.MyBean;
+import com.lhespinel.camel.restapi.repository.FakeOrdersRepository;
 import com.lhespinel.camel.restapi.repository.FakeUsersRepository;
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.Configuration;
@@ -21,6 +22,11 @@ public class MyConfiguration {
     @BindToRegistry("fakeUsersRepository")
     public FakeUsersRepository usersRepository(){
         return new FakeUsersRepository();
+    }
+
+    @BindToRegistry("fakeOrdersRepository")
+    public FakeOrdersRepository ordersRepository(){
+        return new FakeOrdersRepository();
     }
 
 }

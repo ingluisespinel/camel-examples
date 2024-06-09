@@ -19,6 +19,10 @@ public class FakeUsersRepository {
         return users;
     }
 
+    public User findById(@Header("userId") String userId){
+        return users.stream().filter(user -> user.getId().equals(userId)).findFirst().orElse(null);
+    }
+
     public User save(@Body User user){
         user.setId(UUID.randomUUID().toString());
         users.add(user);
