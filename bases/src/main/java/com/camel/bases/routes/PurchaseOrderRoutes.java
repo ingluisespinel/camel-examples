@@ -10,11 +10,11 @@ public class PurchaseOrderRoutes extends RouteBuilder {
     @Override
     public void configure() throws Exception {
 
-//        from("timer:mainTimer?period={{mainTimerPeriod}}")
-//                .routeId("route-main-timer")
-//                .bean("orderGenerator", "generateOrders")
-//                .log("Body size: ${body.size}")
-//                .to("direct:processOrders");
+        from("timer:mainTimer?period={{mainTimerPeriod}}")
+                .routeId("route-main-timer")
+                .bean("orderGenerator", "generateOrders")
+                .log("Body size: ${body.size}")
+                .to("direct:processOrders");
 
         from("direct:processOrders")
                 .routeId("route-orders-splitter")

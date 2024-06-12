@@ -5,7 +5,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.camel.AggregationStrategy;
 import org.apache.camel.Exchange;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -14,7 +13,7 @@ public class OrdersAggregator implements AggregationStrategy {
     @Override
     public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
         int currentPage = newExchange.getMessage().getHeader("currentPage", Integer.class);
-        List<Order> newOrders = newExchange.getIn().getBody(List.class);
+        List<Order> newOrders = newExchange.getMessage().getBody(List.class);
         log.info("NewOrders list {}", newOrders);
         if(newOrders != null && newOrders.size() == 10){
             // Set the current page + 1 in order to get the next page in the next request

@@ -6,10 +6,11 @@ public class MoreRoutes extends RouteBuilder {
 
     @Override
     public void configure() throws Exception {
-
+        /*
         from("timer:example?period=5000")
                 .routeId("route-example-timer")
                 .to("direct:loopDummy");
+         */
 
         from("direct:loopDummy")
                 .loop(5)

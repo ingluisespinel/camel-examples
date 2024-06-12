@@ -1,0 +1,11 @@
+com/camel/bases/routes/MoreRoutes.class
+com/camel/bases/components/DataGenerator.class
+com/camel/bases/MyApplication.class
+com/camel/bases/domain/Item$ItemBuilder.class
+com/camel/bases/domain/PurchaseOrder$PurchaseOrderBuilder.class
+com/camel/bases/routes/PurchaseOrderRoutes.class
+com/camel/bases/domain/OrderStatus.class
+com/camel/bases/domain/PurchaseOrder.class
+com/camel/bases/components/OrderProcessor.class
+com/camel/bases/domain/Item.class
+com/camel/bases/configuration/BeansConfiguration.class
