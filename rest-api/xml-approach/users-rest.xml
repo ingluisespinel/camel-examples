@@ -98,8 +98,11 @@
             <setHeader headerName="Content-Type">
                 <constant>application/json</constant>
             </setHeader>
+            <setHeader headerName="CamelHttpQuery">
+                <simple>page=${header.currentPage}</simple>
+            </setHeader>
             <log message="Getting orders in page ${header.currentPage}"/>
-            <toD uri="http://127.0.0.1:3000/api/v1/orders?page=${header.currentPage}&amp;throwExceptionOnFailure=false&amp;bridgeEndpoint=true"/>
+            <to uri="http://127.0.0.1:3000/api/v1/orders?throwExceptionOnFailure=false&amp;bridgeEndpoint=true"/>
             <unmarshal>
                 <json library="Jackson" useList="true" unmarshalTypeName="com.capacitacion.camel.rest.pojos.Order"/>
             </unmarshal>

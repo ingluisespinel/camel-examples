@@ -1,48 +1,14 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <groupId>com.capacitacion.camel.rest</groupId>
-  <artifactId>rest-api-beans</artifactId>
+  <groupId>com.capacitacion.camel</groupId>
+  <artifactId>demo-datasources</artifactId>
   <version>1.0</version>
-  <name>Archetype - beans</name>
+  <name>Archetype - demo-datasources</name>
   <url>http://maven.apache.org</url>
   <packaging>bundle</packaging>
 
-  <!--
-  <dependencyManagement>
-    <dependencies>
-      <dependency>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-bom</artifactId>
-        <version>2.20.0</version>
-        <type>pom</type>
-        <scope>import</scope>
-      </dependency>
-    </dependencies>
-  </dependencyManagement>
-  -->
-
   <dependencies>
-
-    <!-- https://mvnrepository.com/artifact/org.apache.camel/camel-core -->
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-core</artifactId>
-      <version>2.17.0.redhat-630187</version>
-    </dependency>
-
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-cxf</artifactId>
-      <version>2.17.0.redhat-630187</version>
-    </dependency>
-
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-bean-validator</artifactId>
-      <version>2.17.0.redhat-630187</version>
-    </dependency>
-
     <dependency>
       <groupId>org.projectlombok</groupId>
       <artifactId>lombok</artifactId>
@@ -61,7 +27,7 @@
         <configuration>
           <instructions>
             <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
-            <Export-Package>com.capacitacion.camel.rest.*</Export-Package>
+            <Export-Package>com.capacitacion.camel.datasources.models</Export-Package>
           </instructions>
         </configuration>
       </plugin>
@@ -75,6 +41,4 @@
       </plugin>
     </plugins>
   </build>
-
-
 </project>

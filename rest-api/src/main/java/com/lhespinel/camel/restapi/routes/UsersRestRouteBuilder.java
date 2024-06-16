@@ -5,6 +5,7 @@ import com.lhespinel.camel.restapi.model.Order;
 import com.lhespinel.camel.restapi.model.User;
 import com.lhespinel.camel.restapi.processors.ExceptionHandlerProcessor;
 import org.apache.camel.Exchange;
+import org.apache.camel.Processor;
 import org.apache.camel.PropertyInject;
 import org.apache.camel.ValidationException;
 import org.apache.camel.builder.RouteBuilder;
@@ -40,7 +41,7 @@ public class UsersRestRouteBuilder extends RouteBuilder {
                 .produces("application/json")
                 .get()
                     .to("direct:getUsers")
-                .get("/{userId}")
+                .get("/{userId}/{varX}")
                     .to("direct:getUserById")
                 .post()
                     .type(User.class)
@@ -61,6 +62,14 @@ public class UsersRestRouteBuilder extends RouteBuilder {
 
         from("direct:getUserById")
                 .log("Processing request GetUserById")
+                .log("${headers}")
+                .process(exchange -> {
+                    //exchange.getMessage().getBody() // ${body}
+                    //exchange.getMessage().getHeaders() // ${headers}
+                    String userId = exchange.getMessage().getHeader("userId", String.class); // ${header.userId}
+                    log.info("Llegó el userId {}", userId);
+                    log.info("Llegó el body '{}'", exchange.getIn().getBody(String.class));
+                })
                 .bean("fakeUsersRepository", "findById")
                 .choice()
                 .when(simple("${body} != null"))
@@ -108,6 +117,7 @@ public class UsersRestRouteBuilder extends RouteBuilder {
         from("direct:getExternalOrders")
                 .setHeader(Exchange.HTTP_METHOD, constant("GET"))
                 .setHeader(Exchange.CONTENT_TYPE, constant("application/json"))
+                .setHeader(Exchange.HTTP_QUERY, simple("key=value&"))
                 .log("Getting orders in page ${header.currentPage}")
                 .toD("http://127.0.0.1:3000/api/v1/orders?page=${header.currentPage}&bridgeEndpoint=true")
                 //.unmarshal().json(Order[].class)

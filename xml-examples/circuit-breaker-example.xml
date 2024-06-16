@@ -1,0 +1,38 @@
+<blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="
+               http://www.osgi.org/xmlns/blueprint/v1.0.0 
+               http://www.osgi.org/xmlns/blueprint/v1.0.0/blueprint.xsd
+               http://camel.apache.org/schema/spring 
+               http://camel.apache.org/schema/spring/camel-spring.xsd">
+
+    <camelContext id="camel" xmlns="http://camel.apache.org/schema/blueprint">
+        <route id="circuitBreakerRoute">
+            <from uri="direct:start"/>
+
+            <!-- Resilience4j Circuit Breaker -->
+            <resilience4j:resilience4jConfiguration id="myCircuitBreakerConfig">
+                <resilience4j:circuitBreakerConfig
+                    failureRateThreshold="50"
+                    slowCallRateThreshold="50"
+                    waitDurationInOpenStateInSeconds="10"
+                    permittedNumberOfCallsInHalfOpenState="5"
+                    slidingWindowSize="10"
+                    minimumNumberOfCalls="5"
+                    writableStackTraceEnabled="false"/>
+            </resilience4j:resilience4jConfiguration>
+
+            <resilience4j:resilience4j id="myCircuitBreaker" configuration="myCircuitBreakerConfig">
+                <to uri="http4://example-service/api"/>
+                <onFallback>
+                    <log message="Service is down. Fallback operation in action."/>
+                    <setBody>
+                        <constant>Fallback response</constant>
+                    </setBody>
+                </onFallback>
+            </resilience4j:resilience4j>
+
+            <log message="Response: ${body}"/>
+        </route>
+    </camelContext>
+</blueprint>

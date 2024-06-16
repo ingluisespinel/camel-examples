@@ -1,0 +1,61 @@
+<blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="
+               http://www.osgi.org/xmlns/blueprint/v1.0.0 
+               http://www.osgi.org/xmlns/blueprint/v1.0.0/blueprint.xsd
+               http://camel.apache.org/schema/spring 
+               http://camel.apache.org/schema/spring/camel-spring.xsd">
+
+    <camelContext id="camel" xmlns="http://camel.apache.org/schema/blueprint">
+        
+        <!-- Configuración del Saga Service -->
+        <bean id="sagaService" class="org.apache.camel.impl.saga.InMemorySagaService"/>
+
+        <route id="sagaRoute">
+            <from uri="direct:startSaga"/>
+            
+            <!-- Inicia la Saga -->
+            <saga id="mySaga" propagateHeaders="true">
+                <to uri="direct:orderService"/>
+                <sagaAction action="compensate">
+                    <to uri="direct:compensateOrderService"/>
+                </sagaAction>
+
+                <to uri="direct:paymentService"/>
+                <sagaAction action="compensate">
+                    <to uri="direct:compensatePaymentService"/>
+                </sagaAction>
+            </saga>
+        </route>
+
+        <!-- Definición de rutas para servicios ficticios -->
+        <route id="orderServiceRoute">
+            <from uri="direct:orderService"/>
+            <log message="Processing order..."/>
+            <!-- Simulación de operación de creación de orden -->
+            <to uri="mock:orderService"/>
+        </route>
+
+        <route id="paymentServiceRoute">
+            <from uri="direct:paymentService"/>
+            <log message="Processing payment..."/>
+            <!-- Simulación de operación de procesamiento de pago -->
+            <to uri="mock:paymentService"/>
+        </route>
+
+        <!-- Rutas de compensación -->
+        <route id="compensateOrderServiceRoute">
+            <from uri="direct:compensateOrderService"/>
+            <log message="Compensating order creation..."/>
+            <!-- Simulación de operación de compensación de orden -->
+            <to uri="mock:compensateOrderService"/>
+        </route>
+
+        <route id="compensatePaymentServiceRoute">
+            <from uri="direct:compensatePaymentService"/>
+            <log message="Compensating payment..."/>
+            <!-- Simulación de operación de compensación de pago -->
+            <to uri="mock:compensatePaymentService"/>
+        </route>
+    </camelContext>
+</blueprint>

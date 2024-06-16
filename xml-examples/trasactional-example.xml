@@ -1,0 +1,45 @@
+<blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="
+               http://www.osgi.org/xmlns/blueprint/v1.0.0 
+               http://www.osgi.org/xmlns/blueprint/v1.0.0/blueprint.xsd
+               http://camel.apache.org/schema/spring 
+               http://camel.apache.org/schema/spring/camel-spring.xsd">
+
+    <!-- Configuración del gestor de transacciones -->
+    <bean id="jmsTransactionManager" class="org.springframework.jms.connection.JmsTransactionManager">
+        <property name="connectionFactory" ref="jmsConnectionFactory"/>
+    </bean>
+
+    <!-- Definición del Connection Factory -->
+    <bean id="jmsConnectionFactory" class="org.apache.activemq.ActiveMQConnectionFactory">
+        <property name="brokerURL" value="tcp://localhost:61616"/>
+    </bean>
+
+    <!-- Configuración del template transaccional -->
+    <bean id="jmsTemplate" class="org.springframework.jms.core.JmsTemplate">
+        <property name="connectionFactory" ref="jmsConnectionFactory"/>
+        <property name="sessionTransacted" value="true"/>
+    </bean>
+
+    <!-- Configuración del transaction policy -->
+    <bean id="PROPAGATION_REQUIRED" class="org.apache.camel.spring.spi.SpringTransactionPolicy">
+        <property name="transactionManager" ref="jmsTransactionManager"/>
+        <property name="propagationBehaviorName" value="PROPAGATION_REQUIRED"/>
+    </bean>
+
+    <!-- Configuración del Camel Context -->
+    <camelContext id="camel" xmlns="http://camel.apache.org/schema/blueprint">
+        <transacted ref="PROPAGATION_REQUIRED"/>
+
+        <route id="transactedRoute">
+            <from uri="jms:queue:inputQueue"/>
+
+            <!-- Este bloque se ejecuta dentro de una transacción -->
+            <transacted ref="PROPAGATION_REQUIRED"/>
+            
+            <log message="Received message: ${body}"/>
+            <to uri="jms:queue:outputQueue"/>
+        </route>
+    </camelContext>
+</blueprint>

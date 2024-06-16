@@ -20,23 +20,14 @@ endpoints:
   health:
     enabled: true
 
-
 spring:
   # Spring JDBC configuration
-  sql:
-    init:
-      username: root
-      password: secret
-      platform: mysql
-      mode: always
   datasource:
-    username: root
-    password: secret
-    url: jdbc:mysql://127.0.0.1:3306/test
-  main:
-    allow-bean-definition-overriding: true
+    # Let Spring Boot auto-configure an embedded HSQL database
+    url:
 
 # The application configuration properties
 quickstart:
-  generateOrderPeriod: 10s
-  processOrderPeriod: 30s
+  generateOrderPeriod: 2s
+  processOrderPeriod: 5s
+  
