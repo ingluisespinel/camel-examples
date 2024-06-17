@@ -1,0 +1,145 @@
+<blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:camel="http://camel.apache.org/schema/blueprint"
+    xsi:schemaLocation="
+    http://www.osgi.org/xmlns/blueprint/v1.0.0 http://www.osgi.org/xmlns/blueprint/v1.0.0/blueprint.xsd
+    http://camel.apache.org/schema/blueprint http://camel.apache.org/schema/blueprint/camel-blueprint.xsd">
+
+     <!-- Definición del bean para la conexión a MongoDB -->
+     <bean id="mongoClient" class="com.mongodb.MongoClient">
+        <argument>
+            <bean class="com.mongodb.MongoClientURI">
+                <argument value="mongodb://mongoadmin:secret@127.0.0.1:27017/admin"/>
+            </bean>
+        </argument>
+    </bean>
+
+    <camelContext id="camel-mongo-example" xmlns="http://camel.apache.org/schema/blueprint">
+
+        <restConfiguration component="jetty" port="8080" host="0.0.0.0" bindingMode="json" />
+
+        <rest path="/api/mongo-example/users">
+			<get produces="application/json">
+				<to uri="direct:findAllUsers"/>
+			</get>
+			<get uri="/{userId}" consumes="application/json">
+				<to uri="direct:processRequestFindUserById"/>
+			</get>
+            <get uri="/search" consumes="application/json">
+				<to uri="direct:findUserDynamic"/>
+			</get>
+			<post consumes="application/json" produces="application/json" >                
+				<to uri="direct:processRequestCreateUser"/>
+			</post>
+		</rest>        
+
+        <route id="route-find-all-users">
+            <from uri="direct:findAllUsers"/>
+            <to uri="mongodb:mongoClient?database=test&amp;collection=users&amp;operation=findAll"/>
+        </route>                
+
+        <route id="route-process-request-find-user-by-id">
+            <from uri="direct:processRequestFindUserById"/>
+            <to uri="direct:findUserById" />
+            <choice>
+                <when>
+                    <simple>${body} == null</simple>
+                    <log message="Body null, setting 404 response" />
+                    <setBody>
+                        <simple>{"error": "User not found"}</simple>
+                    </setBody>
+                    <setHeader headerName="CamelHttpResponseCode">
+                        <constant>404</constant>
+                    </setHeader>
+                </when>
+                <otherwise>
+                    <log message="Body not null" />
+                    <setHeader headerName="Content-Type">
+                        <constant>application/json</constant>
+                    </setHeader>
+                </otherwise>
+            </choice>
+        </route>
+
+        <route id="route-process-request-createUser">
+            <from uri="direct:processRequestCreateUser"/>
+            <camel:multicast>
+                <to uri="direct:saveUser" />
+                <to uri="direct:sendEventNewUser" />
+            </camel:multicast>  
+        </route>
+
+        <!--
+            Example using operation 'findOneByQuery' 
+            In the body Object we need to define the JSON Query we want to pass to MongoDB
+            
+            NOTAS: in order to use groovy scripts make sure you have install the required features
+                
+                features:install camel-script camel-groovy
+        -->
+        <route id="route-find-user-by-id">
+            <from uri="direct:findUserById"/>
+            <log message="Finding user by id ${header.userId} using operation 'findOneByQuery'" />
+            <doTry>
+                <!-- Set the body with JSON Structure directly with simple
+                <setBody>
+                    <simple>{ "_id": { "$oid": "${header.userId}" } }</simple>
+                </setBody>
+                -->   
+                <script>
+                    <groovy>
+                        <![CDATA[
+                        import com.mongodb.BasicDBObject
+                        import org.bson.types.ObjectId
+    
+                        String userId = request.headers['userId']
+                        if (!ObjectId.isValid(userId)) {
+                            throw new IllegalArgumentException("Invalid userId: ${userId}")
+                        }                
+                        ObjectId objectId = new ObjectId(userId)
+                        def query = new BasicDBObject("_id", objectId)
+                        request.body = query
+                        ]]>
+                    </groovy>                    
+                </script>
+                <log message="Query build ${body}" />
+                <to uri="mongodb:mongoClient?database=test&amp;collection=users&amp;operation=findOneByQuery"/>
+                <doCatch>
+                    <exception>java.lang.IllegalArgumentException</exception>
+                    <setBody>
+                        <simple>{"error": "Invalid User Id"}</simple>
+                    </setBody>
+                    <setHeader headerName="CamelHttpResponseCode">
+                        <constant>404</constant>
+                    </setHeader>
+                </doCatch>
+            </doTry>                     
+        </route>
+
+        <route id="route-find-user-dynamic">
+            <from uri="direct:findUserDynamic"/>
+            <!-- Uso de Velocity para procesar el template -->
+            <to uri="velocity:file:/home/luis/Desktop/velocity-templates/findByNameQuery.vm"/>            
+            <log message="Query build ${body}" />
+            <to uri="mongodb:mongoClient?database=test&amp;collection=users&amp;operation=findOneByQuery"/>
+        </route>
+
+        <route id="route-save-user">
+            <from uri="direct:saveUser"/>                            
+            <to uri="mongodb:mongoClient?database=test&amp;collection=users&amp;operation=save"/>
+            <log message="Body after save: ${body}, headers ${headers}" />
+            <setBody>
+                <simple>{ new_user_id: ${header.CamelMongoOid} }</simple>
+            </setBody>            
+        </route>
+
+        <route id="route-create-event-new-user">
+            <from uri="direct:sendEventNewUser"/>
+            <to uri="rabbitmq://127.0.0.1:5672/testExchange?routingKey=newUser&amp;username=admin&amp;password=secret&amp;queue=newUsers"/>
+        </route>
+        
+
+    </camelContext>
+
+
+</blueprint>
