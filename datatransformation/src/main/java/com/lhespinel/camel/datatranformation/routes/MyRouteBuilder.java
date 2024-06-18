@@ -2,6 +2,7 @@ package com.lhespinel.camel.datatranformation.routes;
 
 import com.lhespinel.camel.datatranformation.pojos.Orders;
 import com.lhespinel.camel.datatranformation.pojos.User;
+import com.lhespinel.camel.datatranformation.pojos.test.Vista;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.dataformat.csv.CsvDataFormat;
@@ -40,12 +41,13 @@ public class MyRouteBuilder extends RouteBuilder {
 
         from("direct:processJSONFile")
                 .routeId("route-process-json")
-                .unmarshal().json(User[].class)
-                .log("Users length: ${body.length}")
+                .unmarshal().json(Vista.class)
+                .log("Before ${body.class}")
+                .log("Body: ${body.roles[0]}");
                 // Access the data in a specific index using simple language
-                .log("User data in index 0 -> UserName: ${body[0].name}, Id: ${body[0].id}")
-                .marshal().json()
-                .log("JSON String -> ${body}");
+                //.log("User data in index 0 -> UserName: ${body[0].name}, Id: ${body[0].id}")
+                //.marshal().json()
+                //.log("JSON String -> ${body}");
 
         from("direct:processCSVFile")
                 .log("Processing csv data")

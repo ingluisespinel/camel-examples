@@ -1,0 +1,13 @@
+{
+  "acronimo": "prb2",
+  "descripcion": "POSTMAN descripcion2",
+  "aplicacion": "prueba",
+  "roles": [
+    {
+      "tipoRol": "PruebaRol1"
+    },
+    {
+      "tipoRol": "PruebaRol2"
+    }
+  ]
+}
