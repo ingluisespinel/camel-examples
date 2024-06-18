@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="Encoding">
+    <file url="file://$PROJECT_DIR$/bases/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/bases/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/datatransformation/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/datatransformation/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/demojdbc/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/demojdbc/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/example-from-catalog/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/example-from-catalog/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/mongo-demo/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/mongo-demo/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/rest-api/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/rest-api/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/springboot-fuse-rest-demo/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/springboot-fuse-rest-demo/src/main/resources" charset="UTF-8" />
+  </component>
+</project>

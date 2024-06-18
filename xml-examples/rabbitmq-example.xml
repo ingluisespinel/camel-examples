@@ -7,6 +7,7 @@
 
     <camelContext id="rabbitmq-example" xmlns="http://camel.apache.org/schema/blueprint">        
 
+        
         <route id="reoute-consume-new-users">            
             <from uri="rabbitmq://127.0.0.1:5672/testExchange?routingKey=newUser&amp;username=admin&amp;password=secret&amp;queue=newUsers"/>
             <log message="Event newUser received, body: ${body}"/>

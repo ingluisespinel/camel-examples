@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <excludeFromCompile>
+      <directory url="file://$PROJECT_DIR$/rest-api-beans/src/main/resources/archetype-resources" includeSubdirectories="true" />
+      <directory url="file://$PROJECT_DIR$/podatagenerator/src/main/resources/archetype-resources" includeSubdirectories="true" />
+      <directory url="file://$PROJECT_DIR$/camel-demo-datasource-beans/src/main/resources/archetype-resources" includeSubdirectories="true" />
+    </excludeFromCompile>
+    <annotationProcessing>
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="bases" />
+        <module name="rest-api" />
+        <module name="example-from-catalog" />
+        <module name="springboot-fuse-rest-demo" />
+        <module name="demojdbc" />
+        <module name="datatransformation" />
+        <module name="demo-datasources" />
+        <module name="mongo-demo" />
+        <module name="podatagenerator" />
+        <module name="rest-api-beans" />
+      </profile>
+    </annotationProcessing>
+  </component>
+</project>

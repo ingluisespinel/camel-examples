@@ -133,6 +133,36 @@
             </setBody>            
         </route>
 
+        <route id="route-update-user">
+            <from uri="direct:updateUser"/>
+            <setHeader headerName="CamelMongoDbCriteria">
+                <simple>{ "email": "${body['userEmail']}" }</simple>
+            </setHeader>
+            <setBody>
+                <simple>{ "$push": { "address": { "description": "${body['newAddress']['description']}" } } }</simple>
+            </setBody>
+            <log message="Mapped body ${body}"/>
+            <script>
+                <groovy>
+                    <![CDATA[
+                        import com.mongodb.BasicDBObject
+                        import com.mongodb.DBObject
+
+                        BasicDBObject filterQuery =  BasicDBObject.parse(request.headers['CamelMongoDbCriteria'])
+
+                        BasicDBObject updateQuery = BasicDBObject.parse(request.body)
+
+                        List<DBObject> query = new ArrayList<>()
+                        query.add(filterQuery)
+                        query.add(updateQuery)
+                        request.body = query
+                    ]]>
+                </groovy>
+            </script>
+            <log message="Mapped body ${body}"/>
+            <to uri="mongodb:mongoClient?database=test&amp;collection=users&amp;operation=update"/>
+        </route>
+
         <route id="route-create-event-new-user">
             <from uri="direct:sendEventNewUser"/>
             <to uri="rabbitmq://127.0.0.1:5672/testExchange?routingKey=newUser&amp;username=admin&amp;password=secret&amp;queue=newUsers"/>

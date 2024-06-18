@@ -1,5 +1,6 @@
 package com.capacitacion.camel.mongodemo;
 
+import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.rest.RestBindingMode;
 import org.bson.types.ObjectId;
@@ -10,14 +11,16 @@ public class MyRouteBuilder extends RouteBuilder {
     public void configure() throws Exception {
         restConfiguration()
                 .component("jetty")
-                .port(8080)
+                .port(9090)
                 .bindingMode(RestBindingMode.json);
 
-        rest("/api/users")
+        rest("/api/mongo-java/users")
                 .get("/find-by-name")
                     .to("direct:findUserByName")
                 .get("/{userId}")
-                    .to("direct:findUserById");
+                    .to("direct:findUserById")
+                .put()
+                    .to("direct:updateUser");
 
         /*
             <route id="findUserRoute">
@@ -41,6 +44,14 @@ public class MyRouteBuilder extends RouteBuilder {
                 .convertBodyTo(ObjectId.class)
                 .log("Body Content ${body} of class ${body.class}")
                 .to("mongodb:mongoClient?database=test&collection=users&operation=findById")
+                .log("Body class after mongo query: ${body.class}")
+                .log("Query result: ${body}");
+
+        from("direct:updateUser")
+                .setHeader("CamelMongoDbCriteria", simple("{ \"email\":\"${body['userEmail']}\" }"))
+                .setBody(simple("{ \"$push\": { \"address\": { \"description\": \"${body['newAddress']['description']}\" } } }"))
+                .log("Body Content ${body} of class ${body.class}")
+                .to("mongodb:mongoClient?database=test&collection=users&operation=update")
                 .log("Body class after mongo query: ${body.class}")
                 .log("Query result: ${body}");
 

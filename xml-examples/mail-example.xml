@@ -1,0 +1,28 @@
+<blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xmlns:camel="http://camel.apache.org/schema/blueprint"
+           xsi:schemaLocation="http://www.osgi.org/xmlns/blueprint/v1.0.0 http://www.osgi.org/xmlns/blueprint/v1.0.0/blueprint.xsd
+                               http://camel.apache.org/schema/blueprint http://camel.apache.org/schema/blueprint/camel-blueprint.xsd">
+
+    <!-- Definición del contexto de Camel -->
+    <camelContext id="camel" xmlns="http://camel.apache.org/schema/blueprint">
+        <!-- Ruta para enviar un correo electrónico -->
+        <route id="sendEmailRoute">
+            <from uri="direct:startEmail"/>
+            <setHeader headerName="subject">
+                <constant>Test Email</constant>
+            </setHeader>
+            <setHeader headerName="to">
+                <constant>recipient@example.com</constant>
+            </setHeader>
+            <setHeader headerName="from">
+                <constant>sender@example.com</constant>
+            </setHeader>
+            <setBody>
+                <constant>Hello, this is a test email sent from Camel!</constant>
+            </setBody>
+            <to uri="smtp://smtp.gmail.com:587?username=yourusername@gmail.com&amp;password=yourpassword&amp;to=recipient@example.com&amp;from=sender@example.com&amp;subject=Test Email"/>
+        </route>
+    </camelContext>
+
+</blueprint>

@@ -6,13 +6,48 @@
        http://camel.apache.org/schema/spring       http://camel.apache.org/schema/spring/camel-spring.xsd">
 
     <!-- You could also define a traditional camel context here -->
-    <!--
+
     <camelContext xmlns="http://camel.apache.org/schema/spring">
         <route>
             <from uri="timer://foo?period=1000"/>
             <setBody><simple>Hello World from camel-contex.xml</simple></setBody>
             <log message=">>> ${body}"/>
         </route>
+
+        <route id="route-orders-splitter">
+            <from uri="direct:processOrders"/>
+            <split>
+                <simple>${body}</simple>
+                <log message="Order Id: ${body.id} with total ${body.total}"/>
+                <to uri="direct:orderValidator" />
+            </split>
+            <log message="Split finished"/>
+        </route>
+
+        <route id="route-order-validator">
+            <from uri="direct:orderValidator"/>
+            <choice>
+                <when>
+                    <simple>${body.total} > 500.0</simple>
+                    <log message="Order Id: ${body.id} greater than 500.0"/>
+                    <to uri="direct:orderFilter" />
+                </when>
+                <otherwise>
+                    <log message="Order Id: ${body.id} less than 500.0"/>
+                </otherwise>
+            </choice>
+            <log message="Choice finished"/>
+        </route>
+
+        <route id="route-order-filter">
+            <from uri="direct:orderFilter"/>
+            <filter>
+                <simple>${body.total} > 800.0</simple>
+                <log message="Filtered OrderId ${body.id} with total ${body.total}"/>
+                <stop/>
+            </filter>
+            <log message="Order ${body.id} passed the filter"/>
+        </route>
+
     </camelContext>
-    -->
 </beans>
